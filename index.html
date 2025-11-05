@@ -329,24 +329,6 @@
             }
         }
 
-        .score {
-            position: fixed;
-            top: 90px;
-            right: 20px;
-            font-size: 2rem;
-            color: white;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px 20px;
-            border-radius: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            z-index: 50;
-            display: none;
-        }
-
-        .score.active {
-            display: block;
-        }
-
         .back-button {
             position: fixed;
             top: 20px;
@@ -471,7 +453,6 @@
 
     <!-- 게임 UI (게임 컨테이너 밖) -->
     <button class="back-button" id="backButton" onclick="backToMenu()">← 뒤로</button>
-    <div class="score" id="score">0</div>
 
     <!-- PWA 설치 프롬프트 -->
     <div class="install-prompt" id="installPrompt">
@@ -586,8 +567,6 @@
         // 게임 로직
         const gameContainer = document.getElementById('gameContainer');
         const menuContainer = document.getElementById('menuContainer');
-        const scoreDisplay = document.getElementById('score');
-        let score = 0;
         let currentCharacters = [];
         let gameInterval = null;
 
@@ -632,16 +611,92 @@
 
         function playClickSound() {
             if (!soundEnabled) return;
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.2);
+
+            // 다양한 소리 패턴 중 랜덤 선택
+            const patterns = [
+                // 패턴 1: 높은 톤의 징글
+                () => {
+                    [800, 1000, 1200].forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        const start = audioCtx.currentTime + (i * 0.05);
+                        gain.gain.setValueAtTime(0.2, start);
+                        gain.gain.exponentialRampToValueAtTime(0.01, start + 0.15);
+                        osc.start(start);
+                        osc.stop(start + 0.15);
+                    });
+                },
+                // 패턴 2: 낮은 톤에서 높은 톤으로
+                () => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+                    osc.type = 'triangle';
+                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.25);
+                },
+                // 패턴 3: 통통 튀는 소리
+                () => {
+                    [600, 800, 600].forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'square';
+                        const start = audioCtx.currentTime + (i * 0.08);
+                        gain.gain.setValueAtTime(0.15, start);
+                        gain.gain.exponentialRampToValueAtTime(0.01, start + 0.1);
+                        osc.start(start);
+                        osc.stop(start + 0.1);
+                    });
+                },
+                // 패턴 4: 종소리 느낌
+                () => {
+                    [523, 659].forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        const start = audioCtx.currentTime + (i * 0.1);
+                        gain.gain.setValueAtTime(0.2, start);
+                        gain.gain.exponentialRampToValueAtTime(0.01, start + 0.3);
+                        osc.start(start);
+                        osc.stop(start + 0.3);
+                    });
+                },
+                // 패턴 5: 재미있는 멜로디
+                () => {
+                    [700, 900, 1100, 900].forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'triangle';
+                        const start = audioCtx.currentTime + (i * 0.06);
+                        gain.gain.setValueAtTime(0.18, start);
+                        gain.gain.exponentialRampToValueAtTime(0.01, start + 0.12);
+                        osc.start(start);
+                        osc.stop(start + 0.12);
+                    });
+                }
+            ];
+
+            // 랜덤 패턴 실행
+            const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+            randomPattern();
         }
 
         function playAppearSound() {
@@ -688,12 +743,8 @@
 
             // 게임 UI 표시
             document.getElementById('backButton').classList.add('active');
-            document.getElementById('score').classList.add('active');
 
             currentCharacters = themes[theme];
-
-            score = 0;
-            scoreDisplay.textContent = score;
 
             showCharacter();
             scheduleNext();
@@ -712,7 +763,6 @@
 
             // 게임 UI 숨김
             document.getElementById('backButton').classList.remove('active');
-            document.getElementById('score').classList.remove('active');
 
             const characters = gameContainer.querySelectorAll('.character, .sound-text');
             characters.forEach(el => el.remove());
@@ -747,14 +797,7 @@
             playAppearSound();
 
             character.addEventListener('click', () => {
-                score++;
-                scoreDisplay.textContent = score;
-
                 playClickSound();
-
-                if (score % 10 === 0) {
-                    setTimeout(() => playSuccessSound(), 200);
-                }
 
                 const soundText = document.createElement('div');
                 soundText.className = 'sound-text';
