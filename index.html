@@ -44,20 +44,6 @@
             padding: 5rem 1rem 3rem;
         }
 
-        .title {
-            font-size: 3rem;
-            color: white;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-            margin-top: 3rem;
-            animation: bounce 1s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
         /* PWA standalone 모드일 때 여백 조정 */
         @media (display-mode: standalone) {
             body {
@@ -375,8 +361,6 @@
     </style>
 </head>
 <body>
-    <h1 class="title" id="pageTitle">까꿍! 🎉</h1>
-
     <!-- 설정 버튼 -->
     <button class="settings-button" onclick="openSettings()">⚙️</button>
 
@@ -441,7 +425,6 @@
         // 다국어 텍스트
         const i18n = {
             ko: {
-                pageTitle: '까꿍! 🎉',
                 settingsTitle: '설정',
                 soundLabel: '소리',
                 languageLabel: '언어 / Language',
@@ -454,7 +437,6 @@
                 installButton: '설치'
             },
             en: {
-                pageTitle: 'Peekaboo! 🎉',
                 settingsTitle: 'Settings',
                 soundLabel: 'Sound',
                 languageLabel: '언어 / Language',
@@ -481,7 +463,6 @@
             document.getElementById('langEn').classList.toggle('active', lang === 'en');
 
             // UI 텍스트 업데이트
-            document.getElementById('pageTitle').textContent = i18n[lang].pageTitle;
             document.getElementById('settingsTitle').textContent = i18n[lang].settingsTitle;
             document.getElementById('soundLabel').textContent = i18n[lang].soundLabel;
             document.getElementById('themeVehicles').textContent = i18n[lang].themeVehicles;
