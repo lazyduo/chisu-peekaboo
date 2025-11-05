@@ -26,11 +26,6 @@
 - 🎯 **점수 시스템**: 10점마다 축하 사운드
 - ⚙️ **설정 페이지**: 언어와 소리 설정
 
-### 💰 수익화
-- Google AdSense 통합
-- 아동 친화적 광고 설정
-- COPPA 준수
-
 ## 📱 설치 방법
 
 ### iPhone/iPad
@@ -93,7 +88,6 @@
 - **Web Audio API**: 음향 효과 생성
 - **PWA**: Service Worker, Manifest
 - **LocalStorage**: 설정 저장
-- **Google AdSense**: 광고 통합
 - **GitHub Pages**: 배포
 
 ## 📦 로컬에서 실행하기
@@ -112,18 +106,6 @@ start index.html  # Windows
 # 또는
 xdg-open index.html  # Linux
 ```
-
-## 🔧 AdSense 설정
-
-AdSense를 사용하려면 `index.html`에서 다음 부분을 수정하세요:
-
-```html
-<!-- Line 20, 432-433 -->
-data-ad-client="ca-pub-XXXXXXXXX"  <!-- 본인의 AdSense ID로 변경 -->
-data-ad-slot="XXXXXXXXX"           <!-- 본인의 광고 슬롯 ID로 변경 -->
-```
-
-**중요**: 아동 대상 콘텐츠로 AdSense 설정을 해야 합니다 (COPPA 준수)
 
 ## 🌟 특별한 점
 
