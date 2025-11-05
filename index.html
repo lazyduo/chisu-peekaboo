@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Interactive peekaboo game for babies with cute characters">
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,9 +31,10 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -42,6 +43,15 @@
             overflow-y: auto;
             position: relative;
             padding: 5rem 1rem 3rem;
+            /* Safe area inset 지원 */
+            padding-top: max(5rem, env(safe-area-inset-top));
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+            padding-bottom: max(3rem, env(safe-area-inset-bottom));
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         /* PWA standalone 모드일 때 여백 조정 */
@@ -67,19 +77,41 @@
             right: 20px;
             background: rgba(255, 255, 255, 0.3);
             border: none;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 100;
             backdrop-filter: blur(10px);
+            /* 터치 영역 확장 */
+            padding: 10px;
+            margin: -10px;
+            /* 성능 최적화 */
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         .settings-button:hover {
             background: rgba(255, 255, 255, 0.5);
-            transform: rotate(90deg);
+            transform: rotate(90deg) translateZ(0);
+        }
+
+        .settings-button:active {
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(0.95) rotate(90deg) translateZ(0);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .settings-button {
+                top: max(20px, env(safe-area-inset-top, 20px));
+                right: max(20px, env(safe-area-inset-right, 20px));
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
         }
 
         /* 설정 모달 */
@@ -106,6 +138,44 @@
             border-radius: 20px;
             max-width: 400px;
             width: 90%;
+            /* 성능 최적화 */
+            transform: translateZ(0);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .settings-content {
+                padding: 2.5rem;
+                width: 85%;
+            }
+
+            .settings-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .setting-item {
+                padding: 1.5rem 0;
+                font-size: 1.2rem;
+            }
+
+            .toggle-switch {
+                width: 70px;
+                height: 35px;
+            }
+
+            .toggle-switch::after {
+                width: 31px;
+                height: 31px;
+            }
+
+            .toggle-switch.active::after {
+                left: 37px;
+            }
+
+            .lang-button {
+                padding: 12px 20px;
+                font-size: 1.1rem;
+            }
         }
 
         .settings-header {
@@ -207,22 +277,58 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 1rem;
             min-width: 300px;
+            /* 성능 최적화 */
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         .menu-button:hover {
-            transform: translateY(-5px) scale(1.05);
+            transform: translateY(-5px) scale(1.05) translateZ(0);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             background: rgba(255, 255, 255, 1);
         }
 
         .menu-button:active {
-            transform: translateY(-2px) scale(1.02);
+            transform: translateY(-2px) scale(0.98) translateZ(0);
+            background: rgba(255, 255, 255, 0.8);
         }
 
         .menu-icon {
             font-size: 2.5rem;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .menu-button {
+                min-width: 280px;
+                width: 85vw;
+                max-width: 400px;
+                padding: 1.8rem 2rem;
+                font-size: 1.8rem;
+            }
+
+            .menu-icon {
+                font-size: 3rem;
+            }
+        }
+
+        /* 가로 모드 최적화 */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .menu-button {
+                padding: 1rem 2rem;
+                font-size: 1.5rem;
+            }
+
+            .menu-icon {
+                font-size: 2rem;
+            }
+
+            .menu-container {
+                gap: 1rem;
+            }
         }
 
         /* 게임 화면 */
@@ -240,6 +346,9 @@
             overflow: hidden;
             display: none;
             margin-top: 5rem;
+            /* 성능 최적화 */
+            will-change: contents;
+            transform: translateZ(0);
         }
 
         .game-container.active {
@@ -250,7 +359,23 @@
         @media (max-width: 768px) and (orientation: portrait) {
             .game-container {
                 height: 70vh;
+                height: calc(var(--vh, 1vh) * 70);
                 max-height: none;
+                width: 95vw;
+            }
+        }
+
+        /* 가로 모드 최적화 */
+        @media (max-width: 926px) and (orientation: landscape) {
+            .game-container {
+                height: 80vh;
+                height: calc(var(--vh, 1vh) * 80);
+                min-height: 400px;
+                margin-top: 2rem;
+            }
+
+            body {
+                padding: 1rem;
             }
         }
 
@@ -263,10 +388,32 @@
             /* 터치 영역 확장 */
             padding: 2rem;
             margin: -2rem;
+            /* 성능 최적화 */
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .character:hover {
-            transform: scale(1.2) rotate(5deg);
+            transform: scale(1.2) rotate(5deg) translateZ(0);
+        }
+
+        .character:active {
+            transform: scale(1.1) rotate(5deg) translateZ(0);
+        }
+
+        /* 모바일에서 캐릭터 크기 조정 */
+        @media (max-width: 768px) {
+            .character {
+                font-size: 12rem;
+            }
+        }
+
+        @media (max-width: 768px) and (orientation: landscape) {
+            .character {
+                font-size: 9rem;
+            }
         }
 
         @keyframes appear {
@@ -306,6 +453,10 @@
             transition: all 0.3s ease;
             z-index: 50;
             display: none;
+            backdrop-filter: blur(10px);
+            /* 성능 최적화 */
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         .back-button.active {
@@ -314,7 +465,22 @@
 
         .back-button:hover {
             background: rgba(0, 0, 0, 0.5);
-            transform: scale(1.1);
+            transform: scale(1.1) translateZ(0);
+        }
+
+        .back-button:active {
+            background: rgba(0, 0, 0, 0.6);
+            transform: scale(0.95) translateZ(0);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .back-button {
+                top: max(20px, env(safe-area-inset-top, 20px));
+                left: max(20px, env(safe-area-inset-left, 20px));
+                padding: 15px 25px;
+                font-size: 1.8rem;
+            }
         }
 
         .hidden {
@@ -326,7 +492,7 @@
             position: fixed;
             bottom: 20px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateZ(0);
             background: white;
             padding: 1rem 2rem;
             border-radius: 15px;
@@ -335,6 +501,8 @@
             align-items: center;
             gap: 1rem;
             z-index: 100;
+            /* 성능 최적화 */
+            will-change: transform;
         }
 
         .install-prompt.active {
@@ -348,6 +516,12 @@
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .install-button:active {
+            background: #5568d3;
+            transform: scale(0.95);
         }
 
         .dismiss-button {
@@ -357,6 +531,30 @@
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dismiss-button:active {
+            background: #bbb;
+            transform: scale(0.95);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .install-prompt {
+                bottom: max(20px, env(safe-area-inset-bottom, 20px));
+                width: 90%;
+                max-width: 500px;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 1.5rem;
+            }
+
+            .install-button,
+            .dismiss-button {
+                padding: 12px 24px;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -797,6 +995,18 @@
                 gameContainer.appendChild(ripple);
                 setTimeout(() => ripple.remove(), 500);
             }
+        });
+
+        // 모바일 viewport height 조정 (주소창 대응)
+        function setVH() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(setVH, 100);
         });
 
         // 초기 언어 설정
