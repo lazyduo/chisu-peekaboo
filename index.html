@@ -960,10 +960,11 @@
             character.className = 'character';
             character.textContent = currentCharacters[Math.floor(Math.random() * currentCharacters.length)];
 
-            // 랜덤 크기 설정 (0.8배, 1.0배, 1.2배)
-            const sizes = [0.8, 1.0, 1.2];
+            // 랜덤 크기 설정 (font-size 직접 변경)
+            const isMobile = window.innerWidth <= 768;
+            const sizes = isMobile ? ['10rem', '12rem', '14rem'] : ['8rem', '10rem', '12rem'];
             const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
-            character.style.transform = `scale(${randomSize})`;
+            character.style.fontSize = randomSize;
 
             const position = getRandomPosition();
             character.style.left = position.x + 'px';
@@ -971,8 +972,14 @@
 
             playAppearSound();
 
-            character.addEventListener('click', () => {
+            character.addEventListener('click', (e) => {
                 playClickSound();
+
+                // 캐릭터 클릭시에도 원 효과 (클릭 위치 기준)
+                const rect = gameContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                createRippleEffect(x, y);
 
                 character.style.animation = 'disappear 0.3s ease-out forwards';
                 setTimeout(() => {
@@ -992,6 +999,27 @@
             }, delay);
         }
 
+        // 원 효과 생성 함수
+        function createRippleEffect(x, y) {
+            const colors = ['#FF6B6B', '#FFB84D', '#FFE66D', '#4ECDC4', '#45B7D1', '#A78BFA'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple-effect';
+            ripple.style.position = 'absolute';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            ripple.style.borderRadius = '50%';
+            ripple.style.backgroundColor = randomColor;
+            ripple.style.transform = 'translate(-50%, -50%)';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.animation = 'ripplePop 0.6s ease-out forwards';
+            gameContainer.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        }
+
         gameContainer.addEventListener('click', (e) => {
             if (e.target === gameContainer) {
                 if (soundEnabled) {
@@ -1007,24 +1035,8 @@
                     osc.stop(audioCtx.currentTime + 0.1);
                 }
 
-                // 랜덤 색상의 원 효과
-                const colors = ['#FF6B6B', '#FFB84D', '#FFE66D', '#4ECDC4', '#45B7D1', '#A78BFA'];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-                const ripple = document.createElement('div');
-                ripple.className = 'ripple-effect';
-                ripple.style.position = 'absolute';
-                ripple.style.left = e.offsetX + 'px';
-                ripple.style.top = e.offsetY + 'px';
-                ripple.style.width = '20px';
-                ripple.style.height = '20px';
-                ripple.style.borderRadius = '50%';
-                ripple.style.backgroundColor = randomColor;
-                ripple.style.transform = 'translate(-50%, -50%)';
-                ripple.style.pointerEvents = 'none';
-                ripple.style.animation = 'ripplePop 0.6s ease-out forwards';
-                gameContainer.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 600);
+                // 배경 클릭시 원 효과
+                createRippleEffect(e.offsetX, e.offsetY);
             }
         });
 
