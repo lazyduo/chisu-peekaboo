@@ -4,8 +4,8 @@
   "description": "Interactive peekaboo game for babies with cute characters",
   "start_url": "/chisu-peekaboo/",
   "display": "standalone",
-  "background_color": "#667eea",
-  "theme_color": "#667eea",
+  "background_color": "#FFB84D",
+  "theme_color": "#FFB84D",
   "orientation": "any",
   "icons": [
     {
