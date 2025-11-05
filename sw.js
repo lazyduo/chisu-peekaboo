@@ -1,4 +1,4 @@
-const CACHE_NAME = 'peekaboo-v1';
+const CACHE_NAME = 'peekaboo-v2';
 const urlsToCache = [
   '/chisu-peekaboo/',
   '/chisu-peekaboo/index.html'
@@ -13,21 +13,27 @@ self.addEventListener('install', event => {
         return cache.addAll(urlsToCache);
       })
   );
+  // 새 Service Worker 즉시 활성화
   self.skipWaiting();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - Network-First 전략 (항상 최신 버전 확인)
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      }
-    )
+        // 네트워크 응답 성공 - 캐시에 저장하고 반환
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME)
+          .then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+        return response;
+      })
+      .catch(() => {
+        // 네트워크 실패 - 캐시에서 반환 (오프라인 지원)
+        return caches.match(event.request);
+      })
   );
 });
 
