@@ -40,11 +40,12 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             position: relative;
-            padding: 3rem 1rem;
+            padding: 5rem 1rem 3rem;
         }
 
         .title {
@@ -52,7 +53,7 @@
             color: white;
             text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
             margin-bottom: 2rem;
-            margin-top: 2rem;
+            margin-top: 3rem;
             animation: bounce 1s ease-in-out infinite;
         }
 
@@ -232,6 +233,8 @@
             max-width: 728px;
             width: 100%;
             text-align: center;
+            /* 광고 활성화 전까지 숨김 */
+            display: none;
         }
 
         /* 게임 화면 */
@@ -246,6 +249,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             display: none;
+            margin-top: 5rem;
         }
 
         .game-container.active {
