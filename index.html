@@ -260,10 +260,13 @@
 
         .character {
             position: absolute;
-            font-size: 8rem;
+            font-size: 10rem;
             cursor: pointer;
             transition: transform 0.3s ease;
             animation: appear 0.5s ease-out;
+            /* 터치 영역 확장 */
+            padding: 2rem;
+            margin: -2rem;
         }
 
         .character:hover {
@@ -317,7 +320,7 @@
         }
 
         .score {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
             font-size: 2rem;
@@ -326,10 +329,16 @@
             padding: 10px 20px;
             border-radius: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            display: none;
+        }
+
+        .score.active {
+            display: block;
         }
 
         .back-button {
-            position: absolute;
+            position: fixed;
             top: 20px;
             left: 20px;
             font-size: 1.5rem;
@@ -341,6 +350,12 @@
             border: none;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
+            z-index: 50;
+            display: none;
+        }
+
+        .back-button.active {
+            display: block;
         }
 
         .back-button:hover {
@@ -442,9 +457,11 @@
 
     <!-- 게임 화면 -->
     <div class="game-container" id="gameContainer">
-        <button class="back-button" id="backButton" onclick="backToMenu()">← 뒤로</button>
-        <div class="score" id="score">0</div>
     </div>
+
+    <!-- 게임 UI (게임 컨테이너 밖) -->
+    <button class="back-button" id="backButton" onclick="backToMenu()">← 뒤로</button>
+    <div class="score" id="score">0</div>
 
     <!-- PWA 설치 프롬프트 -->
     <div class="install-prompt" id="installPrompt">
@@ -659,6 +676,10 @@
             menuContainer.classList.add('hidden');
             gameContainer.classList.add('active');
 
+            // 게임 UI 표시
+            document.getElementById('backButton').classList.add('active');
+            document.getElementById('score').classList.add('active');
+
             currentCharacters = themes[theme];
 
             score = 0;
@@ -679,14 +700,18 @@
             gameContainer.classList.remove('active');
             menuContainer.classList.remove('hidden');
 
+            // 게임 UI 숨김
+            document.getElementById('backButton').classList.remove('active');
+            document.getElementById('score').classList.remove('active');
+
             const characters = gameContainer.querySelectorAll('.character, .sound-text');
             characters.forEach(el => el.remove());
         }
 
         function getRandomPosition() {
             const containerRect = gameContainer.getBoundingClientRect();
-            const maxX = containerRect.width - 150;
-            const maxY = containerRect.height - 150;
+            const maxX = containerRect.width - 180;
+            const maxY = containerRect.height - 180;
 
             return {
                 x: Math.random() * maxX + 20,
