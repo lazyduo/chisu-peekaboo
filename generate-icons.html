@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이콘 생성기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            margin: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>까꿍 놀이 아이콘 생성</h1>
+        <p>아래 버튼을 클릭해서 PWA 아이콘을 다운로드하세요</p>
+        <div>
+            <button onclick="generateIcon(192)">192x192 아이콘 다운로드</button>
+            <button onclick="generateIcon(512)">512x512 아이콘 다운로드</button>
+        </div>
+        <div id="preview"></div>
+    </div>
+
+    <script>
+        function generateIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // 그라데이션 배경
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // 원형 배경 (하얀색)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.arc(size / 2, size / 2, size * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 이모지 그리기
+            ctx.font = `${size * 0.5}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('👶', size / 2, size / 2);
+
+            // 작은 이모지들
+            const emojis = ['🚗', '🦕', '🍎'];
+            const radius = size * 0.35;
+            emojis.forEach((emoji, i) => {
+                const angle = (i * 2 * Math.PI / emojis.length) - Math.PI / 2;
+                const x = size / 2 + radius * Math.cos(angle);
+                const y = size / 2 + radius * Math.sin(angle);
+                ctx.font = `${size * 0.15}px Arial`;
+                ctx.fillText(emoji, x, y);
+            });
+
+            // 다운로드
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+
+            // 미리보기
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            canvas.style.width = '200px';
+            canvas.style.height = '200px';
+            preview.appendChild(canvas);
+        }
+    </script>
+</body>
+</html>

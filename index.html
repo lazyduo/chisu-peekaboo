@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>까꿍 놀이</title>
+    <meta name="description" content="Interactive peekaboo game for babies with cute characters">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="까꿍놀이">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <title>까꿍 놀이 - Peekaboo Game</title>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXX"
+     crossorigin="anonymous"></script>
+
     <style>
         * {
             margin: 0;
@@ -20,6 +36,7 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
 
         .title {
@@ -33,6 +50,134 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+
+        /* 설정 버튼 */
+        .settings-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .settings-button:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: rotate(90deg);
+        }
+
+        /* 설정 모달 */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .settings-modal.active {
+            display: flex;
+        }
+
+        .settings-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-header h2 {
+            color: #667eea;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 32px;
+        }
+
+        .language-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-button {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .lang-button.active {
+            background: #667eea;
+            color: white;
         }
 
         /* 메뉴 선택 화면 */
@@ -70,6 +215,14 @@
 
         .menu-icon {
             font-size: 2.5rem;
+        }
+
+        /* AdSense 배너 */
+        .ad-banner {
+            margin-top: 2rem;
+            max-width: 728px;
+            width: 100%;
+            text-align: center;
         }
 
         /* 게임 화면 */
@@ -183,38 +336,226 @@
         .hidden {
             display: none;
         }
+
+        /* PWA 설치 프롬프트 */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .install-prompt.active {
+            display: flex;
+        }
+
+        .install-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .dismiss-button {
+            background: #ccc;
+            color: #666;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h1 class="title">까꿍! 🎉</h1>
+    <h1 class="title" id="pageTitle">까꿍! 🎉</h1>
+
+    <!-- 설정 버튼 -->
+    <button class="settings-button" onclick="openSettings()">⚙️</button>
+
+    <!-- 설정 모달 -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2 id="settingsTitle">설정</h2>
+                <button class="close-button" onclick="closeSettings()">&times;</button>
+            </div>
+
+            <div class="setting-item">
+                <span id="soundLabel">소리</span>
+                <div class="toggle-switch active" id="soundToggle" onclick="toggleSound()"></div>
+            </div>
+
+            <div class="setting-item">
+                <span id="languageLabel">언어 / Language</span>
+                <div class="language-buttons">
+                    <button class="lang-button active" id="langKo" onclick="changeLanguage('ko')">한국어</button>
+                    <button class="lang-button" id="langEn" onclick="changeLanguage('en')">English</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- 메뉴 선택 화면 -->
     <div class="menu-container" id="menuContainer">
         <button class="menu-button" onclick="startGame('vehicles')">
             <span class="menu-icon">🚗</span>
-            <span>탈 것</span>
+            <span id="themeVehicles">탈 것</span>
         </button>
         <button class="menu-button" onclick="startGame('animals')">
             <span class="menu-icon">🐶</span>
-            <span>동물</span>
+            <span id="themeAnimals">동물</span>
         </button>
         <button class="menu-button" onclick="startGame('food')">
             <span class="menu-icon">🍎</span>
-            <span>음식</span>
+            <span id="themeFood">음식</span>
         </button>
         <button class="menu-button" onclick="startGame('all')">
             <span class="menu-icon">🌈</span>
-            <span>전체</span>
+            <span id="themeAll">전체</span>
         </button>
+
+        <!-- AdSense 배너 -->
+        <div class="ad-banner">
+            <!-- AdSense 광고 코드를 여기에 넣으세요 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXX"
+                 data-ad-slot="XXXXXXXXX"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
     </div>
 
     <!-- 게임 화면 -->
     <div class="game-container" id="gameContainer">
-        <button class="back-button" onclick="backToMenu()">← 뒤로</button>
+        <button class="back-button" id="backButton" onclick="backToMenu()">← 뒤로</button>
         <div class="score" id="score">0</div>
     </div>
 
+    <!-- PWA 설치 프롬프트 -->
+    <div class="install-prompt" id="installPrompt">
+        <span id="installText">앱으로 설치하시겠어요?</span>
+        <button class="install-button" id="installButton">설치</button>
+        <button class="dismiss-button" onclick="dismissInstall()">나중에</button>
+    </div>
+
     <script>
+        // 다국어 텍스트
+        const i18n = {
+            ko: {
+                pageTitle: '까꿍! 🎉',
+                settingsTitle: '설정',
+                soundLabel: '소리',
+                languageLabel: '언어 / Language',
+                themeVehicles: '탈 것',
+                themeAnimals: '동물',
+                themeFood: '음식',
+                themeAll: '전체',
+                backButton: '← 뒤로',
+                installText: '앱으로 설치하시겠어요?',
+                installButton: '설치',
+                sounds: ['까꿍!', '안녕!', '여기!', '호호!', '와!', '야호!', '빵빵!', '부릉!']
+            },
+            en: {
+                pageTitle: 'Peekaboo! 🎉',
+                settingsTitle: 'Settings',
+                soundLabel: 'Sound',
+                languageLabel: '언어 / Language',
+                themeVehicles: 'Vehicles',
+                themeAnimals: 'Animals',
+                themeFood: 'Food',
+                themeAll: 'All',
+                backButton: '← Back',
+                installText: 'Install as app?',
+                installButton: 'Install',
+                sounds: ['Peekaboo!', 'Hello!', 'Here!', 'Hoho!', 'Wow!', 'Yay!', 'Beep!', 'Vroom!']
+            }
+        };
+
+        let currentLang = localStorage.getItem('language') || 'ko';
+        let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+        let deferredPrompt;
+
+        // 언어 변경
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+
+            document.getElementById('langKo').classList.toggle('active', lang === 'ko');
+            document.getElementById('langEn').classList.toggle('active', lang === 'en');
+
+            // UI 텍스트 업데이트
+            document.getElementById('pageTitle').textContent = i18n[lang].pageTitle;
+            document.getElementById('settingsTitle').textContent = i18n[lang].settingsTitle;
+            document.getElementById('soundLabel').textContent = i18n[lang].soundLabel;
+            document.getElementById('themeVehicles').textContent = i18n[lang].themeVehicles;
+            document.getElementById('themeAnimals').textContent = i18n[lang].themeAnimals;
+            document.getElementById('themeFood').textContent = i18n[lang].themeFood;
+            document.getElementById('themeAll').textContent = i18n[lang].themeAll;
+            document.getElementById('backButton').textContent = i18n[lang].backButton;
+            document.getElementById('installText').textContent = i18n[lang].installText;
+            document.getElementById('installButton').textContent = i18n[lang].installButton;
+
+            document.documentElement.lang = lang === 'ko' ? 'ko' : 'en';
+        }
+
+        // 음소거 토글
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('soundEnabled', soundEnabled);
+            document.getElementById('soundToggle').classList.toggle('active', soundEnabled);
+        }
+
+        // 설정 모달
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        // PWA 설치
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('active');
+        });
+
+        document.getElementById('installButton').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('active');
+            }
+        });
+
+        function dismissInstall() {
+            document.getElementById('installPrompt').classList.remove('active');
+        }
+
+        // Service Worker 등록
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => {
+                console.log('Service Worker registered');
+            });
+        }
+
+        // 게임 로직
         const gameContainer = document.getElementById('gameContainer');
         const menuContainer = document.getElementById('menuContainer');
         const scoreDisplay = document.getElementById('score');
@@ -253,114 +594,90 @@
             all: []
         };
 
-        // 전체 테마는 모든 캐릭터 포함
         themes.all = [...themes.vehicles, ...themes.animals, ...themes.food,
                       '⭐', '🌟', '💫', '🌈', '🎈', '🎁', '🎀', '🎨',
                       '⚽', '🏀', '🎾', '⚾', '🥎', '🏐'];
 
-        const sounds = ['까꿍!', '안녕!', '여기!', '호호!', '와!', '야호!', '빵빵!', '부릉!'];
-
-        // Web Audio API 설정
+        // Web Audio API
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
-        // 음향 효과 함수들
         function playClickSound() {
+            if (!soundEnabled) return;
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
             oscillator.frequency.value = 800;
             oscillator.type = 'sine';
-
             gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-
             oscillator.start(audioCtx.currentTime);
             oscillator.stop(audioCtx.currentTime + 0.2);
         }
 
         function playAppearSound() {
+            if (!soundEnabled) return;
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
             oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
             oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
             oscillator.type = 'triangle';
-
             gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-
             oscillator.start(audioCtx.currentTime);
             oscillator.stop(audioCtx.currentTime + 0.15);
         }
 
         function playSuccessSound() {
-            // 3개 음을 연속으로 재생
+            if (!soundEnabled) return;
             [523, 659, 784].forEach((freq, index) => {
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
-
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
-
                 oscillator.frequency.value = freq;
                 oscillator.type = 'sine';
-
                 const startTime = audioCtx.currentTime + (index * 0.1);
                 gainNode.gain.setValueAtTime(0.2, startTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.15);
-
                 oscillator.start(startTime);
                 oscillator.stop(startTime + 0.15);
             });
         }
 
         function startGame(theme) {
-            // Audio Context resume (브라우저 정책)
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
 
-            // 메뉴 선택 소리
             playSuccessSound();
 
-            // 메뉴 숨기고 게임 화면 표시
             menuContainer.classList.add('hidden');
             gameContainer.classList.add('active');
 
-            // 선택한 테마의 캐릭터 설정
             currentCharacters = themes[theme];
 
-            // 점수 초기화
             score = 0;
             scoreDisplay.textContent = score;
 
-            // 게임 시작
             showCharacter();
             scheduleNext();
         }
 
         function backToMenu() {
-            // 뒤로가기 소리
             playClickSound();
 
-            // 게임 중지
             if (gameInterval) {
                 clearTimeout(gameInterval);
                 gameInterval = null;
             }
 
-            // 화면 전환
             gameContainer.classList.remove('active');
             menuContainer.classList.remove('hidden');
 
-            // 게임 컨테이너 초기화
             const characters = gameContainer.querySelectorAll('.character, .sound-text');
             characters.forEach(el => el.remove());
         }
@@ -377,14 +694,12 @@
         }
 
         function showCharacter() {
-            // 이전 캐릭터들 제거
             const oldCharacters = gameContainer.querySelectorAll('.character');
             oldCharacters.forEach(char => {
                 char.style.animation = 'disappear 0.3s ease-out forwards';
                 setTimeout(() => char.remove(), 300);
             });
 
-            // 새 캐릭터 생성
             const character = document.createElement('div');
             character.className = 'character';
             character.textContent = currentCharacters[Math.floor(Math.random() * currentCharacters.length)];
@@ -393,32 +708,27 @@
             character.style.left = position.x + 'px';
             character.style.top = position.y + 'px';
 
-            // 캐릭터 등장 소리
             playAppearSound();
 
             character.addEventListener('click', () => {
                 score++;
                 scoreDisplay.textContent = score;
 
-                // 클릭 소리
                 playClickSound();
 
-                // 10점마다 축하 소리
                 if (score % 10 === 0) {
                     setTimeout(() => playSuccessSound(), 200);
                 }
 
-                // 소리 효과 텍스트
                 const soundText = document.createElement('div');
                 soundText.className = 'sound-text';
-                soundText.textContent = sounds[Math.floor(Math.random() * sounds.length)];
+                soundText.textContent = i18n[currentLang].sounds[Math.floor(Math.random() * i18n[currentLang].sounds.length)];
                 soundText.style.left = (position.x + 75) + 'px';
                 soundText.style.top = (position.y - 30) + 'px';
                 gameContainer.appendChild(soundText);
 
                 setTimeout(() => soundText.remove(), 500);
 
-                // 클릭시 흔들림 효과
                 character.style.animation = 'disappear 0.3s ease-out forwards';
                 setTimeout(() => {
                     character.remove();
@@ -429,7 +739,6 @@
             gameContainer.appendChild(character);
         }
 
-        // 일정 간격으로 새 캐릭터 표시 (2-4초 간격)
         function scheduleNext() {
             const delay = 2000 + Math.random() * 2000;
             gameInterval = setTimeout(() => {
@@ -438,20 +747,20 @@
             }, delay);
         }
 
-        // 배경 클릭시 반응
         gameContainer.addEventListener('click', (e) => {
             if (e.target === gameContainer) {
-                // 배경 클릭 소리 (작게)
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.frequency.value = 200;
-                osc.type = 'sine';
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.1);
+                if (soundEnabled) {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.value = 200;
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.1);
+                }
 
                 const ripple = document.createElement('div');
                 ripple.style.position = 'absolute';
@@ -464,6 +773,10 @@
                 setTimeout(() => ripple.remove(), 500);
             }
         });
+
+        // 초기 언어 설정
+        changeLanguage(currentLang);
+        document.getElementById('soundToggle').classList.toggle('active', soundEnabled);
     </script>
 </body>
 </html>
