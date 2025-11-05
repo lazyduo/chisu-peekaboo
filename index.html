@@ -62,6 +62,22 @@
             50% { transform: translateY(-10px); }
         }
 
+        /* PWA standalone 모드일 때 여백 조정 */
+        @media (display-mode: standalone) {
+            body {
+                padding: 2rem 1rem 3rem;
+                justify-content: center;
+            }
+
+            .title {
+                margin-top: 0;
+            }
+
+            .game-container {
+                margin-top: 0;
+            }
+        }
+
         /* 설정 버튼 */
         .settings-button {
             position: fixed;
