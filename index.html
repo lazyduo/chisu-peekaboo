@@ -590,6 +590,11 @@
             </div>
 
             <div class="setting-item">
+                <span id="autoChangeLabel">자동 교체</span>
+                <div class="toggle-switch active" id="autoChangeToggle" onclick="toggleAutoChange()"></div>
+            </div>
+
+            <div class="setting-item">
                 <span id="languageLabel">언어 / Language</span>
                 <div class="language-buttons">
                     <button class="lang-button active" id="langKo" onclick="changeLanguage('ko')">한국어</button>
@@ -639,6 +644,7 @@
             ko: {
                 settingsTitle: '설정',
                 soundLabel: '소리',
+                autoChangeLabel: '자동 교체',
                 languageLabel: '언어 / Language',
                 themeVehicles: '탈 것',
                 themeAnimals: '동물',
@@ -651,6 +657,7 @@
             en: {
                 settingsTitle: 'Settings',
                 soundLabel: 'Sound',
+                autoChangeLabel: 'Auto Change',
                 languageLabel: '언어 / Language',
                 themeVehicles: 'Vehicles',
                 themeAnimals: 'Animals',
@@ -664,6 +671,7 @@
 
         let currentLang = localStorage.getItem('language') || 'ko';
         let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+        let autoChangeEnabled = localStorage.getItem('autoChangeEnabled') !== 'false';
         let deferredPrompt;
 
         // 언어 변경
@@ -677,6 +685,7 @@
             // UI 텍스트 업데이트
             document.getElementById('settingsTitle').textContent = i18n[lang].settingsTitle;
             document.getElementById('soundLabel').textContent = i18n[lang].soundLabel;
+            document.getElementById('autoChangeLabel').textContent = i18n[lang].autoChangeLabel;
             document.getElementById('themeVehicles').textContent = i18n[lang].themeVehicles;
             document.getElementById('themeAnimals').textContent = i18n[lang].themeAnimals;
             document.getElementById('themeFood').textContent = i18n[lang].themeFood;
@@ -693,6 +702,22 @@
             soundEnabled = !soundEnabled;
             localStorage.setItem('soundEnabled', soundEnabled);
             document.getElementById('soundToggle').classList.toggle('active', soundEnabled);
+        }
+
+        // 자동 교체 토글
+        function toggleAutoChange() {
+            autoChangeEnabled = !autoChangeEnabled;
+            localStorage.setItem('autoChangeEnabled', autoChangeEnabled);
+            document.getElementById('autoChangeToggle').classList.toggle('active', autoChangeEnabled);
+
+            // 게임 중이면 타이머 재시작 또는 중지
+            if (gameInterval) {
+                clearTimeout(gameInterval);
+                gameInterval = null;
+                if (autoChangeEnabled) {
+                    scheduleNext();
+                }
+            }
         }
 
         // 설정 모달
@@ -996,7 +1021,12 @@
         }
 
         function scheduleNext() {
-            const delay = 2000 + Math.random() * 2000;
+            // 자동 교체가 꺼져있으면 타이머 안 돌림
+            if (!autoChangeEnabled) {
+                return;
+            }
+
+            const delay = 3000 + Math.random() * 2000; // 3-5초
             gameInterval = setTimeout(() => {
                 showCharacter();
                 scheduleNext();
@@ -1059,6 +1089,7 @@
         // 초기 언어 설정
         changeLanguage(currentLang);
         document.getElementById('soundToggle').classList.toggle('active', soundEnabled);
+        document.getElementById('autoChangeToggle').classList.toggle('active', autoChangeEnabled);
     </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'peekaboo-v6';
+const CACHE_NAME = 'peekaboo-v7';
 const urlsToCache = [
   '/chisu-peekaboo/',
   '/chisu-peekaboo/index.html'
