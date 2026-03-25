@@ -948,6 +948,26 @@
         let animalData = null;
         let currentPhotoItem = null;
 
+        // 셔플 큐: 한 사이클 내 중복 방지
+        let shuffledQueue = [];
+        let shuffledPhotoQueue = [];
+
+        function shuffleArray(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function nextFromQueue(source, queue) {
+            if (queue.length === 0) {
+                queue.push(...shuffleArray(source));
+            }
+            return queue.shift();
+        }
+
         // animal.json 로드
         fetch('animal.json')
             .then(res => res.json())
@@ -970,6 +990,7 @@
                 ageContainer.classList.remove('active');
                 gameContainer.classList.add('active');
                 document.getElementById('backButton').classList.add('active');
+                shuffledPhotoQueue = [];
                 showPhotoCharacter();
                 scheduleNext();
             }
@@ -1182,6 +1203,7 @@
             document.getElementById('backButton').classList.add('active');
 
             currentCharacters = themes[theme];
+            shuffledQueue = [];
 
             showCharacter();
             scheduleNext();
@@ -1247,7 +1269,7 @@
 
             const character = document.createElement('div');
             character.className = 'character';
-            character.textContent = currentCharacters[Math.floor(Math.random() * currentCharacters.length)];
+            character.textContent = nextFromQueue(currentCharacters, shuffledQueue);
 
             // 랜덤 크기 설정 (font-size 직접 변경)
             const isMobile = window.innerWidth <= 768;
@@ -1290,7 +1312,7 @@
                 setTimeout(() => char.remove(), 300);
             });
 
-            const item = animalData.items[Math.floor(Math.random() * animalData.items.length)];
+            const item = nextFromQueue(animalData.items, shuffledPhotoQueue);
             currentPhotoItem = item;
 
             const card = document.createElement('div');
