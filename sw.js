@@ -1,7 +1,8 @@
-const CACHE_NAME = 'peekaboo-v7';
+const CACHE_NAME = 'peekaboo-v8';
 const urlsToCache = [
   '/chisu-peekaboo/',
-  '/chisu-peekaboo/index.html'
+  '/chisu-peekaboo/index.html',
+  '/chisu-peekaboo/animal.json'
 ];
 
 // Install event - cache resources

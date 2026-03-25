@@ -501,6 +501,140 @@
             display: none;
         }
 
+        /* 나이 선택 화면 */
+        .age-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .age-title {
+            font-size: 2rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .age-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 2rem 3rem;
+            border-radius: 25px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 300px;
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .age-button:hover {
+            transform: translateY(-5px) scale(1.05) translateZ(0);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .age-button:active {
+            transform: translateY(-2px) scale(0.98) translateZ(0);
+        }
+
+        .age-button .age-icon {
+            font-size: 3rem;
+        }
+
+        .age-button .age-label {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF9A3D;
+        }
+
+        .age-button .age-desc {
+            font-size: 1rem;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .age-button {
+                min-width: 280px;
+                width: 85vw;
+                max-width: 400px;
+                padding: 2.5rem 2rem;
+            }
+
+            .age-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* 사진 카드 캐릭터 */
+        .photo-character {
+            position: absolute;
+            cursor: pointer;
+            animation: appear 0.5s ease-out;
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            margin: -1rem;
+        }
+
+        .photo-character:hover {
+            transform: scale(1.1) translateZ(0);
+        }
+
+        .photo-character:active {
+            transform: scale(1.05) translateZ(0);
+        }
+
+        .photo-character img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .photo-character .photo-label {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .photo-character img {
+                width: 220px;
+                height: 220px;
+                border-radius: 25px;
+            }
+
+            .photo-character .photo-label {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) and (orientation: landscape) {
+            .photo-character img {
+                width: 160px;
+                height: 160px;
+            }
+
+            .photo-character .photo-label {
+                font-size: 1.8rem;
+            }
+        }
+
         /* PWA 설치 프롬프트 */
         .install-prompt {
             position: fixed;
@@ -604,8 +738,23 @@
         </div>
     </div>
 
-    <!-- 메뉴 선택 화면 -->
-    <div class="menu-container" id="menuContainer">
+    <!-- 나이 선택 화면 -->
+    <div class="age-container" id="ageContainer">
+        <div class="age-title" id="ageTitle">나이를 선택하세요</div>
+        <button class="age-button" onclick="selectAge('baby')">
+            <span class="age-icon">👶</span>
+            <span class="age-label" id="ageBabyLabel">0~1세</span>
+            <span class="age-desc" id="ageBabyDesc">이모지로 놀기</span>
+        </button>
+        <button class="age-button" onclick="selectAge('toddler')">
+            <span class="age-icon">🧒</span>
+            <span class="age-label" id="ageToddlerLabel">2세+</span>
+            <span class="age-desc" id="ageToddlerDesc">사진과 단어 배우기</span>
+        </button>
+    </div>
+
+    <!-- 메뉴 선택 화면 (0~1세 이모지 모드) -->
+    <div class="menu-container hidden" id="menuContainer">
         <button class="menu-button" onclick="startGame('vehicles')">
             <span class="menu-icon">🚗</span>
             <span id="themeVehicles">탈 것</span>
@@ -630,6 +779,7 @@
 
     <!-- 게임 UI (게임 컨테이너 밖) -->
     <button class="back-button" id="backButton" onclick="backToMenu()">← 뒤로</button>
+    <button class="back-button" id="backToAgeButton" onclick="backToAge()">← 뒤로</button>
 
     <!-- PWA 설치 프롬프트 -->
     <div class="install-prompt" id="installPrompt">
@@ -646,6 +796,11 @@
                 soundLabel: '소리',
                 autoChangeLabel: '자동 교체',
                 languageLabel: '언어 / Language',
+                ageTitle: '나이를 선택하세요',
+                ageBabyLabel: '0~1세',
+                ageBabyDesc: '이모지로 놀기',
+                ageToddlerLabel: '2세+',
+                ageToddlerDesc: '사진과 단어 배우기',
                 themeVehicles: '탈 것',
                 themeAnimals: '동물',
                 themeFood: '음식',
@@ -659,6 +814,11 @@
                 soundLabel: 'Sound',
                 autoChangeLabel: 'Auto Change',
                 languageLabel: '언어 / Language',
+                ageTitle: 'Select Age',
+                ageBabyLabel: '0~1',
+                ageBabyDesc: 'Play with emojis',
+                ageToddlerLabel: '2+',
+                ageToddlerDesc: 'Learn with photos & words',
                 themeVehicles: 'Vehicles',
                 themeAnimals: 'Animals',
                 themeFood: 'Food',
@@ -686,13 +846,27 @@
             document.getElementById('settingsTitle').textContent = i18n[lang].settingsTitle;
             document.getElementById('soundLabel').textContent = i18n[lang].soundLabel;
             document.getElementById('autoChangeLabel').textContent = i18n[lang].autoChangeLabel;
+            document.getElementById('ageTitle').textContent = i18n[lang].ageTitle;
+            document.getElementById('ageBabyLabel').textContent = i18n[lang].ageBabyLabel;
+            document.getElementById('ageBabyDesc').textContent = i18n[lang].ageBabyDesc;
+            document.getElementById('ageToddlerLabel').textContent = i18n[lang].ageToddlerLabel;
+            document.getElementById('ageToddlerDesc').textContent = i18n[lang].ageToddlerDesc;
             document.getElementById('themeVehicles').textContent = i18n[lang].themeVehicles;
             document.getElementById('themeAnimals').textContent = i18n[lang].themeAnimals;
             document.getElementById('themeFood').textContent = i18n[lang].themeFood;
             document.getElementById('themeAll').textContent = i18n[lang].themeAll;
             document.getElementById('backButton').textContent = i18n[lang].backButton;
+            document.getElementById('backToAgeButton').textContent = i18n[lang].backButton;
             document.getElementById('installText').textContent = i18n[lang].installText;
             document.getElementById('installButton').textContent = i18n[lang].installButton;
+
+            // 게임 중이면 현재 표시된 사진 라벨 업데이트
+            if (currentGameMode === 'photo') {
+                const label = gameContainer.querySelector('.photo-label');
+                if (label && currentPhotoItem) {
+                    label.textContent = lang === 'ko' ? currentPhotoItem.ko : currentPhotoItem.en;
+                }
+            }
 
             document.documentElement.lang = lang === 'ko' ? 'ko' : 'en';
         }
@@ -759,8 +933,39 @@
         // 게임 로직
         const gameContainer = document.getElementById('gameContainer');
         const menuContainer = document.getElementById('menuContainer');
+        const ageContainer = document.getElementById('ageContainer');
         let currentCharacters = [];
         let gameInterval = null;
+        let currentGameMode = 'emoji'; // 'emoji' or 'photo'
+        let animalData = null;
+        let currentPhotoItem = null;
+
+        // animal.json 로드
+        fetch('animal.json')
+            .then(res => res.json())
+            .then(data => { animalData = data; })
+            .catch(err => console.error('Failed to load animal.json:', err));
+
+        // 나이 선택
+        function selectAge(age) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            playSuccessSound();
+            if (age === 'baby') {
+                currentGameMode = 'emoji';
+                ageContainer.classList.add('hidden');
+                menuContainer.classList.remove('hidden');
+                document.getElementById('backToAgeButton').classList.add('active');
+            } else if (age === 'toddler') {
+                currentGameMode = 'photo';
+                ageContainer.classList.add('hidden');
+                gameContainer.classList.add('active');
+                document.getElementById('backButton').classList.add('active');
+                showPhotoCharacter();
+                scheduleNext();
+            }
+        }
 
         // 테마별 캐릭터 정의
         const themes = {
@@ -895,6 +1100,19 @@
             randomPattern();
         }
 
+        // TTS (Text-to-Speech)
+        function speakWord(text) {
+            if (!soundEnabled || !('speechSynthesis' in window)) return;
+            // 이전 발화 중지
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = currentLang === 'ko' ? 'ko-KR' : 'en-US';
+            utterance.rate = 0.8;
+            utterance.pitch = 1.2;
+            utterance.volume = 1.0;
+            speechSynthesis.speak(utterance);
+        }
+
         function playAppearSound() {
             if (!soundEnabled) return;
             const oscillator = audioCtx.createOscillator();
@@ -935,6 +1153,7 @@
             playSuccessSound();
 
             menuContainer.classList.add('hidden');
+            document.getElementById('backToAgeButton').classList.remove('active');
             gameContainer.classList.add('active');
 
             // 게임 UI 표시
@@ -946,6 +1165,13 @@
             scheduleNext();
         }
 
+        function backToAge() {
+            playClickSound();
+            menuContainer.classList.add('hidden');
+            document.getElementById('backToAgeButton').classList.remove('active');
+            ageContainer.classList.remove('hidden');
+        }
+
         function backToMenu() {
             playClickSound();
 
@@ -955,13 +1181,21 @@
             }
 
             gameContainer.classList.remove('active');
-            menuContainer.classList.remove('hidden');
-
-            // 게임 UI 숨김
             document.getElementById('backButton').classList.remove('active');
 
-            const characters = gameContainer.querySelectorAll('.character');
+            // 캐릭터/사진 제거
+            const characters = gameContainer.querySelectorAll('.character, .photo-character');
             characters.forEach(el => el.remove());
+
+            if (currentGameMode === 'photo') {
+                // 사진 모드에서는 나이 선택 화면으로
+                ageContainer.classList.remove('hidden');
+                currentPhotoItem = null;
+            } else {
+                // 이모지 모드에서는 테마 선택 화면으로
+                menuContainer.classList.remove('hidden');
+                document.getElementById('backToAgeButton').classList.add('active');
+            }
         }
 
         function getRandomPosition() {
@@ -1020,6 +1254,66 @@
             gameContainer.appendChild(character);
         }
 
+        // 사진 모드 캐릭터 표시
+        function showPhotoCharacter() {
+            if (!animalData || !animalData.items.length) return;
+
+            const oldChars = gameContainer.querySelectorAll('.photo-character');
+            oldChars.forEach(char => {
+                char.style.animation = 'disappear 0.3s ease-out forwards';
+                setTimeout(() => char.remove(), 300);
+            });
+
+            const item = animalData.items[Math.floor(Math.random() * animalData.items.length)];
+            currentPhotoItem = item;
+
+            const card = document.createElement('div');
+            card.className = 'photo-character';
+
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.alt = item.en;
+            img.draggable = false;
+
+            const label = document.createElement('div');
+            label.className = 'photo-label';
+            label.textContent = currentLang === 'ko' ? item.ko : item.en;
+
+            card.appendChild(img);
+            card.appendChild(label);
+
+            // 위치 계산
+            const containerRect = gameContainer.getBoundingClientRect();
+            const isMobile = window.innerWidth <= 768;
+            const cardSize = isMobile ? 260 : 240;
+            const maxX = Math.max(10, containerRect.width - cardSize);
+            const maxY = Math.max(10, containerRect.height - cardSize - 40);
+            card.style.left = (Math.random() * maxX) + 'px';
+            card.style.top = (Math.random() * maxY) + 'px';
+
+            playAppearSound();
+            // 사진 나타날 때 단어 읽어주기
+            speakWord(currentLang === 'ko' ? item.ko : item.en);
+
+            card.addEventListener('click', (e) => {
+                playClickSound();
+                // 클릭할 때도 다시 읽어주기
+                speakWord(currentLang === 'ko' ? item.ko : item.en);
+                const rect = gameContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                createRippleEffect(x, y);
+
+                card.style.animation = 'disappear 0.3s ease-out forwards';
+                setTimeout(() => {
+                    card.remove();
+                    showPhotoCharacter();
+                }, 300);
+            });
+
+            gameContainer.appendChild(card);
+        }
+
         function scheduleNext() {
             // 자동 교체가 꺼져있으면 타이머 안 돌림
             if (!autoChangeEnabled) {
@@ -1028,7 +1322,11 @@
 
             const delay = 3000 + Math.random() * 2000; // 3-5초
             gameInterval = setTimeout(() => {
-                showCharacter();
+                if (currentGameMode === 'photo') {
+                    showPhotoCharacter();
+                } else {
+                    showCharacter();
+                }
                 scheduleNext();
             }, delay);
         }

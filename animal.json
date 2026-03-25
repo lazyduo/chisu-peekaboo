@@ -1,0 +1,126 @@
+{
+    "category": "animals",
+    "categoryKo": "동물",
+    "items": [
+      {
+        "id": "cat",
+        "en": "Cat",
+        "ko": "고양이",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Cat_August_2010-4.jpg/400px-Cat_August_2010-4.jpg"
+      },
+      {
+        "id": "dog",
+        "en": "Dog",
+        "ko": "강아지",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/YellowLabradorLooking_new.jpg/400px-YellowLabradorLooking_new.jpg"
+      },
+      {
+        "id": "lion",
+        "en": "Lion",
+        "ko": "사자",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/400px-Lion_waiting_in_Namibia.jpg"
+      },
+      {
+        "id": "tiger",
+        "en": "Tiger",
+        "ko": "호랑이",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Walking_tiger_female.jpg/400px-Walking_tiger_female.jpg"
+      },
+      {
+        "id": "elephant",
+        "en": "Elephant",
+        "ko": "코끼리",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/400px-African_Bush_Elephant.jpg"
+      },
+      {
+        "id": "giraffe",
+        "en": "Giraffe",
+        "ko": "기린",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Giraffe_Mikumi_National_Park.jpg/400px-Giraffe_Mikumi_National_Park.jpg"
+      },
+      {
+        "id": "zebra",
+        "en": "Zebra",
+        "ko": "얼룩말",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Plains_Zebra_Equus_quagga.jpg/400px-Plains_Zebra_Equus_quagga.jpg"
+      },
+      {
+        "id": "penguin",
+        "en": "Penguin",
+        "ko": "펭귄",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/South_Pole_Penguin.jpg/400px-South_Pole_Penguin.jpg"
+      },
+      {
+        "id": "dolphin",
+        "en": "Dolphin",
+        "ko": "돌고래",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Tursiops_truncatus_01.jpg/400px-Tursiops_truncatus_01.jpg"
+      },
+      {
+        "id": "eagle",
+        "en": "Eagle",
+        "ko": "독수리",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bald_Eagle_Portrait.jpg/400px-Bald_Eagle_Portrait.jpg"
+      },
+      {
+        "id": "rabbit",
+        "en": "Rabbit",
+        "ko": "토끼",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Oryctolagus_cuniculus_Rcdo.jpg/400px-Oryctolagus_cuniculus_Rcdo.jpg"
+      },
+      {
+        "id": "fox",
+        "en": "Fox",
+        "ko": "여우",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vulpes_vulpes_ssp_fulvus.jpg/400px-Vulpes_vulpes_ssp_fulvus.jpg"
+      },
+      {
+        "id": "bear",
+        "en": "Bear",
+        "ko": "곰",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/BrownBear.jpg/400px-BrownBear.jpg"
+      },
+      {
+        "id": "panda",
+        "en": "Panda",
+        "ko": "판다",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/400px-Grosser_Panda.JPG"
+      },
+      {
+        "id": "kangaroo",
+        "en": "Kangaroo",
+        "ko": "캥거루",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Kangaroo_and_joey03.jpg/400px-Kangaroo_and_joey03.jpg"
+      },
+      {
+        "id": "crocodile",
+        "en": "Crocodile",
+        "ko": "악어",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Saltwater_crocodile_%28Crocodylus_porosus%29.jpg/400px-Saltwater_crocodile_%28Crocodylus_porosus%29.jpg"
+      },
+      {
+        "id": "parrot",
+        "en": "Parrot",
+        "ko": "앵무새",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Macaw_mcaw.jpg/400px-Macaw_mcaw.jpg"
+      },
+      {
+        "id": "owl",
+        "en": "Owl",
+        "ko": "올빼미",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/COnWings.jpg/400px-COnWings.jpg"
+      },
+      {
+        "id": "shark",
+        "en": "Shark",
+        "ko": "상어",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/White_shark.jpg/400px-White_shark.jpg"
+      },
+      {
+        "id": "horse",
+        "en": "Horse",
+        "ko": "말",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nokota_Horses_cropped.jpg/400px-Nokota_Horses_cropped.jpg"
+      }
+    ]
+  }
