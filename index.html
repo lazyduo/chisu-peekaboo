@@ -263,10 +263,14 @@
 
         /* 메뉴 선택 화면 */
         .menu-container {
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 1.5rem;
             align-items: center;
+        }
+
+        .menu-container.active {
+            display: flex;
         }
 
         .menu-button {
@@ -503,10 +507,14 @@
 
         /* 나이 선택 화면 */
         .age-container {
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 2rem;
             align-items: center;
+        }
+
+        .age-container.active {
+            display: flex;
         }
 
         .age-title {
@@ -739,7 +747,7 @@
     </div>
 
     <!-- 나이 선택 화면 -->
-    <div class="age-container" id="ageContainer">
+    <div class="age-container active" id="ageContainer">
         <div class="age-title" id="ageTitle">나이를 선택하세요</div>
         <button class="age-button" onclick="selectAge('baby')">
             <span class="age-icon">👶</span>
@@ -754,7 +762,7 @@
     </div>
 
     <!-- 메뉴 선택 화면 (0~1세 이모지 모드) -->
-    <div class="menu-container hidden" id="menuContainer">
+    <div class="menu-container" id="menuContainer">
         <button class="menu-button" onclick="startGame('vehicles')">
             <span class="menu-icon">🚗</span>
             <span id="themeVehicles">탈 것</span>
@@ -954,12 +962,12 @@
             playSuccessSound();
             if (age === 'baby') {
                 currentGameMode = 'emoji';
-                ageContainer.classList.add('hidden');
-                menuContainer.classList.remove('hidden');
+                ageContainer.classList.remove('active');
+                menuContainer.classList.add('active');
                 document.getElementById('backToAgeButton').classList.add('active');
             } else if (age === 'toddler') {
                 currentGameMode = 'photo';
-                ageContainer.classList.add('hidden');
+                ageContainer.classList.remove('active');
                 gameContainer.classList.add('active');
                 document.getElementById('backButton').classList.add('active');
                 showPhotoCharacter();
@@ -1101,15 +1109,29 @@
         }
 
         // TTS (Text-to-Speech)
-        function speakWord(text) {
-            if (!soundEnabled || !('speechSynthesis' in window)) return;
+        let isSpeaking = false;
+
+        function speakWord(text, onEnd) {
+            if (!soundEnabled || !('speechSynthesis' in window)) {
+                if (onEnd) onEnd();
+                return;
+            }
             // 이전 발화 중지
             speechSynthesis.cancel();
+            isSpeaking = true;
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = currentLang === 'ko' ? 'ko-KR' : 'en-US';
             utterance.rate = 0.8;
             utterance.pitch = 1.2;
             utterance.volume = 1.0;
+            utterance.onend = () => {
+                isSpeaking = false;
+                if (onEnd) onEnd();
+            };
+            utterance.onerror = () => {
+                isSpeaking = false;
+                if (onEnd) onEnd();
+            };
             speechSynthesis.speak(utterance);
         }
 
@@ -1152,7 +1174,7 @@
 
             playSuccessSound();
 
-            menuContainer.classList.add('hidden');
+            menuContainer.classList.remove('active');
             document.getElementById('backToAgeButton').classList.remove('active');
             gameContainer.classList.add('active');
 
@@ -1167,9 +1189,9 @@
 
         function backToAge() {
             playClickSound();
-            menuContainer.classList.add('hidden');
+            menuContainer.classList.remove('active');
             document.getElementById('backToAgeButton').classList.remove('active');
-            ageContainer.classList.remove('hidden');
+            ageContainer.classList.add('active');
         }
 
         function backToMenu() {
@@ -1187,13 +1209,17 @@
             const characters = gameContainer.querySelectorAll('.character, .photo-character');
             characters.forEach(el => el.remove());
 
+            // TTS도 중지
+            speechSynthesis.cancel();
+            isSpeaking = false;
+
             if (currentGameMode === 'photo') {
                 // 사진 모드에서는 나이 선택 화면으로
-                ageContainer.classList.remove('hidden');
+                ageContainer.classList.add('active');
                 currentPhotoItem = null;
             } else {
                 // 이모지 모드에서는 테마 선택 화면으로
-                menuContainer.classList.remove('hidden');
+                menuContainer.classList.add('active');
                 document.getElementById('backToAgeButton').classList.add('active');
             }
         }
@@ -1292,23 +1318,25 @@
             card.style.top = (Math.random() * maxY) + 'px';
 
             playAppearSound();
-            // 사진 나타날 때 단어 읽어주기
-            speakWord(currentLang === 'ko' ? item.ko : item.en);
 
             card.addEventListener('click', (e) => {
+                // speech 중이면 클릭 무시
+                if (isSpeaking) return;
+
                 playClickSound();
-                // 클릭할 때도 다시 읽어주기
-                speakWord(currentLang === 'ko' ? item.ko : item.en);
                 const rect = gameContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 createRippleEffect(x, y);
 
-                card.style.animation = 'disappear 0.3s ease-out forwards';
-                setTimeout(() => {
-                    card.remove();
-                    showPhotoCharacter();
-                }, 300);
+                // 단어 읽어준 뒤 다음 사진으로 전환
+                speakWord(currentLang === 'ko' ? item.ko : item.en, () => {
+                    card.style.animation = 'disappear 0.3s ease-out forwards';
+                    setTimeout(() => {
+                        card.remove();
+                        showPhotoCharacter();
+                    }, 300);
+                });
             });
 
             gameContainer.appendChild(card);
@@ -1322,6 +1350,11 @@
 
             const delay = 3000 + Math.random() * 2000; // 3-5초
             gameInterval = setTimeout(() => {
+                // 사진 모드에서 speech 중이면 다음 전환 보류
+                if (currentGameMode === 'photo' && isSpeaking) {
+                    scheduleNext();
+                    return;
+                }
                 if (currentGameMode === 'photo') {
                     showPhotoCharacter();
                 } else {
