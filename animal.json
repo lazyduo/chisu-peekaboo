@@ -21,6 +21,7 @@
       { "id": "parrot",    "en": "Parrot",    "ko": "앵무새",  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Ara_ararauna_Luc_Viatour.jpg/400px-Ara_ararauna_Luc_Viatour.jpg" },
       { "id": "owl",       "en": "Owl",       "ko": "올빼미",  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Himalayan_Wood_Owl.jpg/400px-Himalayan_Wood_Owl.jpg" },
       { "id": "shark",     "en": "Shark",     "ko": "상어",   "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/White_shark.jpg/400px-White_shark.jpg" },
-      { "id": "horse",     "en": "Horse",     "ko": "말",    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nokota_Horses_cropped.jpg/400px-Nokota_Horses_cropped.jpg" }
+      { "id": "horse",     "en": "Horse",     "ko": "말",    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nokota_Horses_cropped.jpg/400px-Nokota_Horses_cropped.jpg" },
+      { "id": "gorilla",   "en": "Gorilla",   "ko": "고릴라",  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Goryl_(14923279426).jpg/400px-Goryl_(14923279426).jpg" }
     ]
   }

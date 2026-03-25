@@ -1142,8 +1142,8 @@
             isSpeaking = true;
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = currentLang === 'ko' ? 'ko-KR' : 'en-US';
-            utterance.rate = 0.8;
-            utterance.pitch = 1.2;
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
             utterance.volume = 1.0;
             utterance.onend = () => {
                 isSpeaking = false;
